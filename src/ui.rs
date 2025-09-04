@@ -9,21 +9,33 @@ use crossterm::style;
 use crossterm::terminal;
 use time::Duration;
 
-pub fn draw<W>(w: &mut W, counter: Duration) -> Result<()>
+pub fn draw<W>(w: &mut W, counter: Duration, subtitle: Option<&String>) -> Result<()>
 where
     W: io::Write,
 {
     let counter_time = Time::from(&counter);
     let size = terminal::size()?;
 
+    let counter_time_formatted = counter_time.format();
+
     let s = counter_time.render(size);
     execute!(
         w,
-        terminal::SetTitle(&counter_time.format()),
+        match subtitle {
+            Some(text) => terminal::SetTitle(format!("{}: {}", text, counter_time_formatted)),
+            None => terminal::SetTitle(counter_time_formatted),
+        },
         cursor::MoveTo(0, 0),
         terminal::Clear(terminal::ClearType::All),
     )?;
-    println!("{s}");
+
+    if let Some(text) = subtitle {
+        let left_padded_text = format!("{}{}", " ".repeat((size.0 as usize / 2) - text.len() / 2), text);
+        println!("{s}\n{left_padded_text}");
+    } else {
+        println!("{s}");
+    }
+
     Ok(())
 }
 

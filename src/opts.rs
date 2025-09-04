@@ -17,6 +17,9 @@ pub struct Opts {
     /// Enable terminal bell (useful for visual bell)
     #[arg(short, long)]
     pub terminal_bell: bool,
+    /// A subtitle to display under the time
+    #[arg(long)]
+    pub subtitle: Option<String>,
     /// Remaining time until the alarm sounds. Format: `%Hh %Mm %Ss`.
     /// It also supports `min` for minutes or empty for seconds.
     /// In addition, you can set a target time `%H:%M`. E.g.: 10s, 08:25, 12:00, 3h10m, 15min, 10.

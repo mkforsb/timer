@@ -101,8 +101,8 @@ where
     W: io::Write,
 {
     match end - OffsetDateTime::now_utc() {
-        counter if counter > Duration::ZERO => ui::draw(w, counter),
-        counter if counter <= Duration::ZERO => ui::draw(w, Duration::ZERO),
+        counter if counter > Duration::ZERO => ui::draw(w, counter, None),
+        counter if counter <= Duration::ZERO => ui::draw(w, Duration::ZERO, None),
         _ => unreachable!(),
     }
 }
@@ -139,12 +139,12 @@ fn play_sound() -> Result<()> {
 pub fn countdown<W: io::Write>(w: &mut W, end: OffsetDateTime, opts: &Opts) -> Result<()> {
     match end - OffsetDateTime::now_utc() {
         counter if counter > Duration::ZERO => {
-            ui::draw(w, counter)?;
+            ui::draw(w, counter, opts.subtitle.as_ref())?;
             sleep(stdDuration::from_secs(1));
             countdown(w, end, opts)
         }
         counter if counter <= Duration::ZERO => {
-            ui::draw(w, Duration::ZERO)?;
+            ui::draw(w, Duration::ZERO, opts.subtitle.as_ref())?;
             if opts.terminal_bell {
                 println!("{BELL_CHART}");
             }
